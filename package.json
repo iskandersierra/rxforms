@@ -1,7 +1,7 @@
 {
-  "name": "ts-library-starter",
+  "name": "rxforms",
   "version": "0.0.0",
-  "description": "Example git project that is used for typescript libraries as a starter pack",
+  "description": "Simple helper functions to model observable forms",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
@@ -18,30 +18,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iskandersierra/ts-library-starter.git"
+    "url": "git+https://github.com/iskandersierra/rxforms.git"
   },
   "keywords": [
-    "example",
-    "typescript",
-    "library",
-    "starter",
-    "webpack",
-    "browserify",
-    "dts-bundle",
-    "package",
-    "tslint",
-    "jest",
-    "babel",
-    "tsloader",
-    "boilerplate",
-    "awesome-typescript-loader"
+    "rxjs",
+    "forms",
+    "typescript"
   ],
   "author": "Iskander Sierra",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/iskandersierra/ts-library-starter/issues"
+    "url": "https://github.com/iskandersierra/rxforms/issues"
   },
-  "homepage": "https://github.com/iskandersierra/ts-library-starter#readme",
+  "homepage": "https://github.com/iskandersierra/rxforms#readme",
   "devDependencies": {
     "@types/jest": "^0.9.31",
     "@types/node": "^6.0.38",
