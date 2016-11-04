@@ -9,6 +9,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/publishLast";
 import "rxjs/add/operator/scan";
 import "rxjs/add/operator/startWith";
+import "rxjs/add/operator/withLatestFrom";
 import { Validator, ValidationResult, successResult } from "rxvalidation";
 
 import {
@@ -22,61 +23,52 @@ import {
   FormElementStore, FormFieldStore, FormGroupStore, FormElementStoreVariants,
 } from "./interfaces";
 import { createFieldConfig, createGroupConfig } from "./configs";
+import { emptyEvent, typedEvent, letValue, connectLastOf, applyEffects } from "./internals";
 
 export function createFieldStore(
   options: FormFieldOptions,
-  createOptions?: CreateStoreOptions
+  createOptions?: CreateStoreOptions,
+  ...effects: ((store: FormFieldStore) => void)[]
 ): FormFieldStore {
-  const config = createFieldConfig(options, createOptions);
 
-  const resetSubject$ = new Subject<void>();
-  const reset$ = resetSubject$.asObservable();
-  const reset = () => resetSubject$.next();
+  // EVENTS
 
-  const focusSubject$ = new Subject<void>();
-  const focus$ = focusSubject$.asObservable();
-  const focus = () => focusSubject$.next();
+  const [ reset$, reset ] = emptyEvent();
+  const [ focus$, focus ] = emptyEvent();
+  const [ blur$, blur ] = emptyEvent();
+  const [ update$, update ] = typedEvent<any>();
 
-  const blurSubject$ = new Subject<void>();
-  const blur$ = blurSubject$.asObservable();
-  const blur = () => blurSubject$.next();
+  // STATES
 
-  const updateSubject$ = new Subject<any>();
-  const update$ = updateSubject$.asObservable();
-  const update = (value: any) => updateSubject$.next(value);
+  const [config$, start] = connectLastOf(Observable.of(createFieldConfig(options, createOptions)));
 
-  const connectableValue$ = Observable.merge(
-    reset$.map(() => config.defaultValue),
-    update$.map(value => config.coerce(value)),
+  const value$ = Observable.merge(
+    config$.map(config => config.defaultValue),
+    reset$.withLatestFrom(config$, (_, config) => config.defaultValue),
+    update$.withLatestFrom(config$, (value, config) => config.coerce(value)),
   )
-    .startWith(config.defaultValue)
-    .distinctUntilChanged()
-    .publishLast();
-  const value$ = connectableValue$.map(e => e);
-
-  const isDirty$ = value$
-    .map(value => !config.areEquals(value, config.defaultValue))
     .distinctUntilChanged();
 
-  const connectableHasFocus$ = Observable.merge(
+  const isDirty$ = value$
+    .withLatestFrom(config$, (value, config) => !config.areEquals(value, config.defaultValue))
+    .distinctUntilChanged();
+
+  const hasFocus$ = Observable.merge(
+    config$.map(config => false), // config.initialHasFocus
     focus$.map(() => true),
     blur$.map(() => false),
   )
-    .startWith(false)
-    .distinctUntilChanged()
-    .publishLast();
-  const hasFocus$ = connectableHasFocus$.map(e => e);
+    .distinctUntilChanged();
 
-  const connectableIsTouched$ = Observable.merge<(isTouched: boolean) => boolean>(
-    reset$.map(() => () => false),
+  const isTouched$ = Observable.merge<(isTouched: boolean) => boolean>(
     hasFocus$.map(hasFocus => hasFocus ? () => true : (isTouched: boolean) => isTouched),
     isDirty$.map(isDirty => isDirty ? () => true : (isTouched: boolean) => isTouched),
+    reset$.map(() => () => false),
   )
     .scan((isTouched, reducer) => reducer(isTouched), false)
     .startWith(false)
     .distinctUntilChanged()
     .publishLast();
-  const isTouched$ = connectableIsTouched$.map(e => e);
 
   const isValid$ = Observable.of<boolean>(true);
   const isInvalid$ = Observable.of<boolean>(false);
@@ -95,30 +87,14 @@ export function createFieldStore(
     hasFocus$,
     (value, { isValid, isInvalid, validation, isPending }, isDirty, isTouched, hasFocus): FormFieldState => ({
       kind: "field",
-      value,
-      isValid,
-      isInvalid,
-      validation,
-      isPending,
-      isDirty,
-      isTouched,
-      hasFocus,
-      reset,
-      focus,
-      blur,
-      update,
+      value, isValid, isInvalid, validation, isPending, isDirty, isTouched, hasFocus,
+      reset, focus, blur, update,
     })
   );
 
-  const start = () => {
-    connectableValue$.connect();
-    connectableHasFocus$.connect();
-    connectableIsTouched$.connect();
-  };
-
-  return {
+  const store: FormFieldStore = {
     kind: "field",
-    config,
+    config$,
 
     value$,
     isValid$,
@@ -137,4 +113,10 @@ export function createFieldStore(
 
     start,
   };
+
+  applyEffects(store, ...effects);
+
+  start();
+
+  return store;
 }

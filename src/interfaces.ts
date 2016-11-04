@@ -99,6 +99,8 @@ export interface FormGroupState extends FormElementState {
   readonly children: ReadonlyChildrenOf<FormElementState>;
 }
 
+export type FormElementStateVariants = FormFieldState | FormGroupState;
+
 /* STORES */
 
 export interface CreateStoreOptions extends CreateConfigOptions {
@@ -107,8 +109,8 @@ export interface CreateStoreOptions extends CreateConfigOptions {
 
 export interface FormElementStore {
 
-  readonly config: FormElementConfig;
-  readonly state$: Observable<FormElementState>;
+  readonly config$: Observable<FormElementConfigVariants>;
+  readonly state$: Observable<FormElementStateVariants>;
 
   readonly value$: Observable<any>;
   // Validation
@@ -132,7 +134,7 @@ export interface FormElementStore {
 
 export interface FormFieldStore extends FormElementStore {
   readonly kind: "field";
-  readonly config: FormFieldConfig;
+  readonly config$: Observable<FormFieldConfig>;
   readonly state$: Observable<FormFieldState>;
 
   // Commands
@@ -147,8 +149,8 @@ export interface FormFieldStore extends FormElementStore {
 
 export interface FormGroupStore extends FormElementStore {
   readonly kind: "group";
-  readonly config: FormGroupConfig;
-  readonly children: ReadonlyChildrenOf<FormElementStoreVariants>;
+  readonly config$: Observable<FormGroupConfig>;
+  readonly children$: Observable<ReadonlyChildrenOf<FormElementStoreVariants>>;
   readonly state$: Observable<FormGroupState>;
 }
 
