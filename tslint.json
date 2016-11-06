@@ -10,6 +10,7 @@
 			"always-prefix"
 		],
 		"no-unused-variable": false,
+		"no-var-requires": false,
 		"object-literal-sort-keys": false,
 		"whitespace": [
 			false
