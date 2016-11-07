@@ -15,7 +15,7 @@ export interface ChildrenOf<T> {
 }
 
 export interface ReadonlyChildrenOf<T> {
-  readonly [name: string]: T;
+  readonly[name: string]: T;
 }
 
 /* OPTIONS */
@@ -127,9 +127,6 @@ export interface FormElementStore {
   readonly reset$: Observable<void>;
 
   reset(): void;
-
-  // Start the store
-  start(): void;
 }
 
 export interface FormFieldStore extends FormElementStore {

@@ -1,6 +1,6 @@
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/of";
-import { Validator, ValidationResult, successResult } from "rxvalidation";
+import { Validator, ValidationResult, success } from "rxvalidation";
 
 import {
   IsFieldValueEmpty, CoerceFieldValue, AreEqualsFieldValues,
@@ -12,7 +12,6 @@ import {
 } from "./interfaces";
 import { defaultCreateOptions } from "./options";
 
-const validatorDefault: Validator = () => Observable.of(successResult());
 const isEmptyDefault = (value: any) => !value;
 const coerceDefault = (value: any) => value;
 const areEqualDefault = (value: any, oldValue: any) => value === oldValue;
@@ -25,7 +24,7 @@ export function createFieldConfig(
   const {
     title = "field",
     type,
-    validator = validatorDefault,
+    validator = success,
     defaultValue = undefined,
     isEmpty = isEmptyDefault,
     coerce = coerceDefault,
@@ -51,7 +50,7 @@ export function createGroupConfig(
   const createOptionsOrDefault = createOptions || defaultCreateOptions();
   const {
     title = "group",
-    validator = validatorDefault,
+    validator = success,
     children,
   } = options;
 
@@ -73,11 +72,8 @@ export function createElementConfig(
   createOptions?: CreateConfigOptions
 ): FormElementConfigVariants {
   switch (options.kind) {
-    case "field":
-      return createFieldConfig(options, createOptions);
-    case "group":
-      return createGroupConfig(options, createOptions);
-    default:
-      throw new Error("Unknown element kind");
+    case "field": return createFieldConfig(options, createOptions);
+    case "group": return createGroupConfig(options, createOptions);
+    default: throw new Error("Unknown element kind");
   }
 }

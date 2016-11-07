@@ -1,3 +1,3 @@
 export * from "./interfaces";
 export * from "./options";
-export * from "./configs";
+export * from "./form";

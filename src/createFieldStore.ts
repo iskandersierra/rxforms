@@ -24,6 +24,7 @@ import {
 } from "./interfaces";
 import { createFieldConfig, createGroupConfig } from "./configs";
 import { emptyEvent, typedEvent, letValue, connectLastOf, applyEffects } from "./internals";
+import { form } from "./form";
 
 export function createFieldStore(
   options: FormFieldOptions,
@@ -33,14 +34,16 @@ export function createFieldStore(
 
   // EVENTS
 
-  const [ reset$, reset ] = emptyEvent();
-  const [ focus$, focus ] = emptyEvent();
-  const [ blur$, blur ] = emptyEvent();
-  const [ update$, update ] = typedEvent<any>();
+  const [reset$, reset] = emptyEvent();
+  const [focus$, focus] = emptyEvent();
+  const [blur$, blur] = emptyEvent();
+  const [update$, update] = typedEvent<any>();
 
-  // STATES
+  // DERIVED STATES
 
-  const [config$, start] = connectLastOf(Observable.of(createFieldConfig(options, createOptions)));
+  const [config$, startConfig] = connectLastOf(Observable.of(createFieldConfig(options, createOptions)));
+
+  // DERIVED STATES
 
   const value$ = Observable.merge(
     config$.map(config => config.defaultValue),
@@ -54,21 +57,21 @@ export function createFieldStore(
     .distinctUntilChanged();
 
   const hasFocus$ = Observable.merge(
-    config$.map(config => false), // config.initialHasFocus
+    config$.map(config => false),
     focus$.map(() => true),
     blur$.map(() => false),
   )
     .distinctUntilChanged();
 
   const isTouched$ = Observable.merge<(isTouched: boolean) => boolean>(
+    config$.map(config => (): boolean => false),
     hasFocus$.map(hasFocus => hasFocus ? () => true : (isTouched: boolean) => isTouched),
     isDirty$.map(isDirty => isDirty ? () => true : (isTouched: boolean) => isTouched),
-    reset$.map(() => () => false),
+    reset$.map(() => (): boolean => false),
   )
     .scan((isTouched, reducer) => reducer(isTouched), false)
     .startWith(false)
-    .distinctUntilChanged()
-    .publishLast();
+    .distinctUntilChanged();
 
   const isValid$ = Observable.of<boolean>(true);
   const isInvalid$ = Observable.of<boolean>(false);
@@ -92,6 +95,8 @@ export function createFieldStore(
     })
   );
 
+  /* STORE */
+
   const store: FormFieldStore = {
     kind: "field",
     config$,
@@ -110,13 +115,13 @@ export function createFieldStore(
     focus$, focus,
     blur$, blur,
     update$, update,
-
-    start,
   };
+
+  /* EFFECTS */
 
   applyEffects(store, ...effects);
 
-  start();
+  startConfig();
 
   return store;
 }
