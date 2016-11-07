@@ -21,7 +21,7 @@ export function createFieldConfig(
   options: FormFieldOptions,
   createOptions?: CreateConfigOptions
 ): FormFieldConfig {
-  const createOptionsOrDefault = createOptions || defaultCreateOptions;
+  const createOptionsOrDefault = createOptions || defaultCreateOptions();
   const {
     title = "field",
     type,
@@ -48,7 +48,7 @@ export function createGroupConfig(
   options: FormGroupOptions,
   createOptions?: CreateConfigOptions
 ): FormGroupConfig {
-  const createOptionsOrDefault = createOptions || defaultCreateOptions;
+  const createOptionsOrDefault = createOptions || defaultCreateOptions();
   const {
     title = "group",
     validator = validatorDefault,

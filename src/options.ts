@@ -6,9 +6,9 @@ import {
   CreateStoreOptions,
 } from "./interfaces";
 
-export const defaultCreateOptions: CreateStoreOptions = {};
+export const defaultCreateOptions = (): CreateStoreOptions => ({});
 
-export function field(
+function custom(
   title: string,
   type: string = "text",
   defaultValue: any = undefined,
@@ -29,7 +29,7 @@ export function field(
   };
 }
 
-export function group(
+function group(
   title: string,
   children: ChildrenOf<FormElementOptionsVariants>,
   validator: Validator | undefined = undefined,
@@ -41,3 +41,9 @@ export function group(
     children,
   };
 }
+
+export const fields = {
+  custom,
+  group,
+};
+

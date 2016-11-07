@@ -98,7 +98,7 @@ describe("connectLastOf", () => {
       () => expect(typeof connectLastOf).toBe("function"));
   }); //    Sanity checks
 
-  describe("Given an typed event", () => {
+  describe("Given a connectable item", () => {
     describe("When the connectable is inspected", () => {
       const [obs, start] = connectLastOf(Observable.of("hello"));
       it("obs should be an observable",
@@ -111,16 +111,16 @@ describe("connectLastOf", () => {
       const [obs, start] = connectLastOf(Observable.of("hello"));
       it("it should not emit any value", () => {
         const promise = obs.takeUntil(Observable.interval(40)).toArray().toPromise();
-        return promise.then(values => expect(values).toEqual(["hello"]));
+        return promise.then(values => expect(values).toEqual([]));
       });
     }); //    When an event is emitted
 
     describe("When the connectable is started", () => {
       const [obs, start] = connectLastOf(Observable.of("hello"));
-      it("it should not emit any value", () => {
+      it("it should emit given value", () => {
         const promise = obs.takeUntil(Observable.interval(40)).toArray().toPromise();
         start();
-        return promise.then(values => expect(values).toEqual(["hello!"]));
+        return promise.then(values => expect(values).toEqual(["hello"]));
       });
     }); //    When an event is emitted
   }); //    Given an typed event
@@ -133,17 +133,17 @@ describe("letValue", () => {
   }); //    Sanity checks
 
   describe("When letValue is called", () => {
-      it("it should call the given function with given value", () => {
-        const fn = jest.fn();
-        const result = letValue("hello", fn);
-        expect(fn).toHaveBeenCalledWith("hello");
-      });
+    it("it should call the given function with given value", () => {
+      const fn = jest.fn();
+      const result = letValue("hello", fn);
+      expect(fn).toHaveBeenCalledWith("hello");
+    });
 
-      it("it should return the value given by the function", () => {
-        const fn = jest.fn(() => "world");
-        const result = letValue("hello", fn);
-        expect(result).toBe("world");
-      });
+    it("it should return the value given by the function", () => {
+      const fn = jest.fn(() => "world");
+      const result = letValue("hello", fn);
+      expect(result).toBe("world");
+    });
   });    // When letValue is called
 
 });    // letValue
