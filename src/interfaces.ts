@@ -29,6 +29,9 @@ export interface FormFieldOptions extends FormElementOptions {
   kind: "field";
   type: string;
   defaultValue?: any;
+  validateAlways?: boolean;
+  isPristineWhenDefaultValue?: boolean;
+  focusOnLoad?: boolean;
   isEmpty?: IsFieldValueEmpty;
   coerce?: CoerceFieldValue;
   areEquals?: AreEqualsFieldValues;
@@ -56,6 +59,9 @@ export interface FormFieldConfig extends FormElementConfig {
   readonly kind: "field";
   readonly type: string;
   readonly defaultValue: any;
+  readonly validateAlways: boolean;
+  readonly isPristineWhenDefaultValue: boolean;
+  readonly focusOnLoad: boolean;
   readonly isEmpty: IsFieldValueEmpty;
   readonly coerce: CoerceFieldValue;
   readonly areEquals: AreEqualsFieldValues;
@@ -72,14 +78,19 @@ export type FormElementConfigVariants = FormFieldConfig | FormGroupConfig;
 
 export interface FormElementState {
   readonly value: any;
+
   // Validation
   readonly isValid: boolean;
   readonly isInvalid: boolean;
   readonly validation: ValidationResult;
+  readonly errors: ValidationResult;
   readonly isPending: boolean;
+
   // Status
   readonly isDirty: boolean;
+  readonly isPristine: boolean;
   readonly isTouched: boolean;
+  readonly isUntouched: boolean;
   readonly hasFocus: boolean;
 
   reset(): void;
@@ -108,22 +119,8 @@ export interface CreateStoreOptions extends CreateConfigOptions {
 }
 
 export interface FormElementStore {
-
-  readonly config$: Observable<FormElementConfigVariants>;
   readonly state$: Observable<FormElementStateVariants>;
 
-  readonly value$: Observable<any>;
-  // Validation
-  readonly isValid$: Observable<boolean>;
-  readonly isInvalid$: Observable<boolean>;
-  readonly validation$: Observable<ValidationResult>;
-  readonly isPending$: Observable<boolean>;
-  // Status
-  readonly isDirty$: Observable<boolean>;
-  readonly isTouched$: Observable<boolean>;
-  readonly hasFocus$: Observable<boolean>;
-
-  // Commands
   readonly reset$: Observable<void>;
 
   reset(): void;
@@ -131,10 +128,9 @@ export interface FormElementStore {
 
 export interface FormFieldStore extends FormElementStore {
   readonly kind: "field";
-  readonly config$: Observable<FormFieldConfig>;
+
   readonly state$: Observable<FormFieldState>;
 
-  // Commands
   readonly focus$: Observable<void>;
   readonly blur$: Observable<void>;
   readonly update$: Observable<any>;
@@ -146,8 +142,7 @@ export interface FormFieldStore extends FormElementStore {
 
 export interface FormGroupStore extends FormElementStore {
   readonly kind: "group";
-  readonly config$: Observable<FormGroupConfig>;
-  readonly children$: Observable<ReadonlyChildrenOf<FormElementStoreVariants>>;
+
   readonly state$: Observable<FormGroupState>;
 }
 
