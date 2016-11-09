@@ -26,7 +26,10 @@ export function createFieldConfig(
     type,
     validator = success,
     defaultValue = undefined,
-    validateAlways = false,
+    setPristineWhenUpdateDefaultValue = false,
+    debounceValidation = undefined,
+    debounceValueForValidation = undefined,
+    validateWhenPristine = false,
     focusOnLoad = false,
     isEmpty = isEmptyDefault,
     coerce = coerceDefault,
@@ -39,7 +42,10 @@ export function createFieldConfig(
     title,
     validator,
     defaultValue: coerce(defaultValue),
-    validateAlways,
+    setPristineWhenUpdateDefaultValue,
+    debounceValidation,
+    debounceValueForValidation,
+    validateWhenPristine,
     focusOnLoad,
     isEmpty,
     coerce,
@@ -77,7 +83,6 @@ export function createElementConfig(
 ): FormElementConfigVariants {
   switch (options.kind) {
     case "field": return createFieldConfig(options, createOptions);
-    case "group": return createGroupConfig(options, createOptions);
-    default: throw new Error("Unknown element kind");
+    default: return createGroupConfig(options, createOptions);
   }
 }

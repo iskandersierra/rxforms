@@ -11,8 +11,10 @@ export const defaultCreateOptions = (): CreateStoreOptions => ({});
 export interface CommonOptions<T> {
   defaultValue?: T;
   validator?: Validator;
-  validateAlways?: boolean;
-  isPristineWhenDefaultValue?: boolean;
+  validateWhenPristine?: boolean;
+  setPristineWhenUpdateDefaultValue?: boolean;
+  debounceValidation?: number;
+  debounceValueForValidation?: number;
   focusOnLoad?: boolean;
   isEmpty?: ((s: T) => boolean);
   areEquals?: ((a: T, b: T) => boolean);
@@ -29,8 +31,10 @@ function custom(
     type = "string",
     defaultValue = undefined,
     focusOnLoad = false,
-    validateAlways = false,
-    isPristineWhenDefaultValue = false,
+    validateWhenPristine = false,
+    setPristineWhenUpdateDefaultValue = false,
+    debounceValidation = undefined,
+    debounceValueForValidation = undefined,
     validator = undefined,
     isEmpty = undefined,
     areEquals = undefined,
@@ -42,8 +46,10 @@ function custom(
     title,
     defaultValue,
     focusOnLoad,
-    validateAlways,
-    isPristineWhenDefaultValue,
+    validateWhenPristine,
+    setPristineWhenUpdateDefaultValue,
+    debounceValidation,
+    debounceValueForValidation,
     validator,
     isEmpty,
     areEquals,
@@ -81,8 +87,10 @@ function string(title: string, options?: CommonOptions<string> & {
   const {
     defaultValue = undefined,
     focusOnLoad = false,
-    validateAlways = false,
-    isPristineWhenDefaultValue = false,
+    validateWhenPristine = false,
+    setPristineWhenUpdateDefaultValue = false,
+    debounceValidation = undefined,
+    debounceValueForValidation = undefined,
     validator = undefined,
     isEmpty = isStringEmpty,
     areEquals = areStringEquals,
@@ -97,8 +105,10 @@ function string(title: string, options?: CommonOptions<string> & {
     type: "string",
     defaultValue,
     focusOnLoad,
-    validateAlways,
-    isPristineWhenDefaultValue,
+    validateWhenPristine,
+    setPristineWhenUpdateDefaultValue,
+    debounceValidation,
+    debounceValueForValidation,
     validator,
     isEmpty,
     areEquals,

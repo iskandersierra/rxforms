@@ -29,8 +29,10 @@ export interface FormFieldOptions extends FormElementOptions {
   kind: "field";
   type: string;
   defaultValue?: any;
-  validateAlways?: boolean;
-  isPristineWhenDefaultValue?: boolean;
+  validateWhenPristine?: boolean;
+  setPristineWhenUpdateDefaultValue?: boolean;
+  debounceValidation?: number;
+  debounceValueForValidation?: number;
   focusOnLoad?: boolean;
   isEmpty?: IsFieldValueEmpty;
   coerce?: CoerceFieldValue;
@@ -59,8 +61,10 @@ export interface FormFieldConfig extends FormElementConfig {
   readonly kind: "field";
   readonly type: string;
   readonly defaultValue: any;
-  readonly validateAlways: boolean;
-  readonly isPristineWhenDefaultValue: boolean;
+  readonly validateWhenPristine: boolean;
+  readonly setPristineWhenUpdateDefaultValue: boolean;
+  readonly debounceValidation: number | undefined;
+  readonly debounceValueForValidation: number | undefined;
   readonly focusOnLoad: boolean;
   readonly isEmpty: IsFieldValueEmpty;
   readonly coerce: CoerceFieldValue;
