@@ -59,35 +59,44 @@ export function createFieldStore(
 
   // CORE STATE
   interface CoreState {
+    readonly config: FormFieldConfig;
     readonly hasFocus: boolean;
     readonly value: any;
     readonly isDirty: boolean;
     readonly isTouched: boolean;
   }
+
   const coreStateFactory$ =
-    (config: FormFieldConfig, init: CoreState) =>
+    (conf: FormFieldConfig, init: CoreState) =>
       Observable.merge<(coreState: CoreState) => CoreState>(
+        config$.map(config => (state: CoreState) => {
+          return assign({}, state, { config });
+        }),
+
         // On focus hasFocus should get value true
         focus$.map(() => (state: CoreState) => {
           const hasFocus = true;
           return assign({}, state, { hasFocus });
         }),
+
         // On blur hasFocus should get value false
         blur$.map(() => (state: CoreState) => {
           const hasFocus = false;
           const isTouched = state.hasFocus ? true : state.isTouched;
           return assign({}, state, { hasFocus, isTouched });
         }),
+
         reset$.map(() => (state: CoreState) => {
           const isDirty = false;
           const isTouched = false;
-          const value = config.defaultValue;
+          const value = state.config.defaultValue;
           return assign({}, state, { isTouched, isDirty, value });
         }),
+
         update$.map(newValue => (state: CoreState) => {
-          const value = config.coerce(newValue);
-          const isDirty = config.setPristineWhenUpdateDefaultValue
-            ? !config.areEquals(config.defaultValue, value)
+          const value = state.config.coerce(newValue);
+          const isDirty = state.config.setPristineWhenUpdateDefaultValue
+            ? !state.config.areEquals(state.config.defaultValue, value)
             : true;
           const isTouched = state.isTouched || isDirty;
           return assign({}, state, { isTouched, isDirty, value });
@@ -98,6 +107,7 @@ export function createFieldStore(
 
   const coreState$ = config$.first()
     .switchMap(config => coreStateFactory$(config, {
+      config,
       hasFocus: config.focusOnLoad,
       isDirty: false,
       isTouched: false,
@@ -121,15 +131,20 @@ export function createFieldStore(
   // STATE
   const state$ = Observable.combineLatest(
     coreState$, validation$,
-    ({ hasFocus, value, isDirty, isTouched }, validation) => ({
+    ({ config, hasFocus, value, isDirty, isTouched }, validation) => ({
       kind: "field" as "field",
-      hasFocus, value, isDirty, isTouched, validation,
+      value,
+      hasFocus,
+      isDirty,
       isPristine: !isDirty,
+      isTouched,
       isUntouched: !isTouched,
-      errors: validation,
       isValid: validation.isSuccess,
       isInvalid: validation.isError,
       isPending: validation.isInconclusive,
+      validation,
+      errors: validation,
+      config,
       reset, update, focus, blur,
     })
   );

@@ -9,6 +9,7 @@ import {
   FormElementStore, FormFieldStore, FormGroupStore, FormElementStoreVariants,
 } from "./interfaces";
 import { createFieldStore } from "./createFieldStore";
+import { createGroupStore } from "./createGroupStore";
 
 export function form(
   options: FormElementOptionsVariants,
@@ -17,7 +18,6 @@ export function form(
 ): FormElementStoreVariants {
   switch (options.kind) {
     case "field": return createFieldStore(options, createOptions, ...effects);
-
-    default: throw new Error("Unknown form element type: " + options.kind);
+    default: return createGroupStore(options, createOptions, ...effects);
   }
 }

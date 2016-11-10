@@ -81,6 +81,7 @@ export type FormElementConfigVariants = FormFieldConfig | FormGroupConfig;
 /* STATES */
 
 export interface FormElementState {
+  readonly config: FormElementConfig;
   readonly value: any;
 
   // Validation
@@ -102,6 +103,7 @@ export interface FormElementState {
 
 export interface FormFieldState extends FormElementState {
   readonly kind: "field";
+  readonly config: FormFieldConfig;
 
   focus(): void;
   blur(): void;
@@ -110,6 +112,7 @@ export interface FormFieldState extends FormElementState {
 
 export interface FormGroupState extends FormElementState {
   readonly kind: "group";
+  readonly config: FormFieldConfig;
 
   readonly children: ReadonlyChildrenOf<FormElementState>;
 }
