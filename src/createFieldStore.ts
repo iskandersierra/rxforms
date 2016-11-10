@@ -69,7 +69,7 @@ export function createFieldStore(
   const coreStateFactory$ =
     (conf: FormFieldConfig, init: CoreState) =>
       Observable.merge<(coreState: CoreState) => CoreState>(
-        config$.map(config => (state: CoreState) => {
+        config$.skip(1).map(config => (state: CoreState) => {
           return assign({}, state, { config });
         }),
 
@@ -95,6 +95,7 @@ export function createFieldStore(
 
         update$.map(newValue => (state: CoreState) => {
           const value = state.config.coerce(newValue);
+          if (state.config.areEquals(state.value, value)) { return state; }
           const isDirty = state.config.setPristineWhenUpdateDefaultValue
             ? !state.config.areEquals(state.config.defaultValue, value)
             : true;

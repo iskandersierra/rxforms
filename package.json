@@ -67,7 +67,7 @@
     "rxvalidation": "^0.1.1"
   },
   "jest": {
-    "verbose": false,
+    "verbose": true,
     "scriptPreprocessor": "node_modules/typescript-babel-jest",
     "testEnvironment": "node",
     "testRegex": ".*\\.spec\\.ts$",
