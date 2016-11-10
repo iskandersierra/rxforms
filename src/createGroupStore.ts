@@ -104,7 +104,6 @@ export function createGroupStore(
       return result;
     });
 
-
   // VALIDATION
   const validation$ = config$
     .switchMap(config => innerState$
