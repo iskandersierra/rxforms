@@ -61,6 +61,9 @@ export function createGroupConfig(
   const {
     title = "group",
     validator = success,
+    validateWhenPristine = false,
+    debounceValidation = undefined,
+    debounceValueForValidation = undefined,
     children,
   } = options;
 
@@ -73,6 +76,9 @@ export function createGroupConfig(
     kind: "group",
     title,
     validator,
+    validateWhenPristine,
+    debounceValidation,
+    debounceValueForValidation,
     children: ch,
   };
 }

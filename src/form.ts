@@ -11,13 +11,14 @@ import {
 import { createFieldStore } from "./createFieldStore";
 import { createGroupStore } from "./createGroupStore";
 
-export function form(
-  options: FormElementOptionsVariants,
-  createOptions?: CreateStoreOptions,
-  ...effects: ((store: FormElementStoreVariants) => void)[]
-): FormElementStoreVariants {
-  switch (options.kind) {
-    case "field": return createFieldStore(options, createOptions, ...effects);
-    default: return createGroupStore(options, createOptions, ...effects);
-  }
-}
+export const form = createGroupStore;
+// (
+//   options: FormElementOptionsVariants,
+//   createOptions?: CreateStoreOptions,
+//   ...effects: ((store: FormElementStoreVariants) => void)[]
+// ): FormElementStoreVariants {
+//   switch (options.kind) {
+//     case "field": return createFieldStore(options, createOptions, ...effects);
+//     default: return createGroupStore(options, createOptions, ...effects);
+//   }
+// }

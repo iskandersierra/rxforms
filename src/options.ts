@@ -60,15 +60,26 @@ function custom(
 function group(
   title: string,
   children: ChildrenOf<FormElementOptionsVariants>,
-  options?: { validator?: Validator }
+  options?: {
+    validator?: Validator;
+    validateWhenPristine?: boolean;
+    debounceValidation?: number;
+    debounceValueForValidation?: number;
+  }
 ): FormGroupOptions {
   const {
     validator = undefined,
+    validateWhenPristine = false,
+    debounceValidation = undefined,
+    debounceValueForValidation = undefined,
   } = options || {};
   return {
     kind: "group",
     title,
     validator,
+    validateWhenPristine,
+    debounceValidation,
+    debounceValueForValidation,
     children,
   };
 }

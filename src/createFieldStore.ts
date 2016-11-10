@@ -147,7 +147,7 @@ export function createFieldStore(
       errors: validation,
       config,
       reset, update, focus, blur,
-    })
+    } as FormFieldState)
   );
 
   /* STORE */
